@@ -10,9 +10,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@biconomy/account": "^3.1.1",
+    "@biconomy/bundler": "^3.1.1",
+    "@biconomy/common": "^3.1.1",
+    "@biconomy/core-types": "^3.1.1",
+    "@biconomy/paymaster": "^3.1.1",
     "@openzeppelin/contracts": "^5.0.0",
     "@openzeppelin/merkle-tree": "^1.0.5",
+    "@privy-io/react-auth": "^1.47.2",
     "d3": "^7.8.5",
+    "ethers": "^6.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
