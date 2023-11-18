@@ -1,69 +1,79 @@
-import { useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
+import { StandardMerkleTree } from "@openzeppelin/merkle-tree";
+import fs from "fs";
 
 import './App.css'
-import { Web3AuthModalPack, Web3AuthConfig } from '@safe-global/auth-kit'
-import { Web3AuthOptions } from '@web3auth/modal'
-import { OpenloginAdapter } from '@web3auth/openlogin-adapter'
+
+type Record = {
+  amount: number;
+  electricityType: number;
+  method: number;
+};
+
+type Data = {
+  result?: {
+    output?: Record[];
+  };
+};
+
+
+
 
 function App() {
+  let values: Data | undefined; 
 
-  // https://web3auth.io/docs/sdk/pnp/web/modal/initialize#arguments
-const options: Web3AuthOptions = {
-  clientId: 'YOUR_WEB3_AUTH_CLIENT_ID', // https://dashboard.web3auth.io/
-  web3AuthNetwork: 'testnet',
-  chainConfig: {
-    chainNamespace: CHAIN_NAMESPACES.EIP155,
-    chainId: '0x5',
-    // https://chainlist.org/
-    rpcTarget: 'https://rpc.ankr.com/eth_goerli'
-  },
-  uiConfig: {
-    theme: 'dark',
-    loginMethodsOrder: ['google', 'facebook']
-  }
-}
 
-// https://web3auth.io/docs/sdk/pnp/web/modal/initialize#configuring-adapters
-const modalConfig = {
-  [WALLET_ADAPTERS.TORUS_EVM]: {
-    label: 'torus',
-    showOnModal: false
-  },
-  [WALLET_ADAPTERS.METAMASK]: {
-    label: 'metamask',
-    showOnDesktop: true,
-    showOnMobile: false
-  }
-}
+  const [count, setCount] = useState(0)
+  let url = 'https://j2hyhqqyc5drjjtk7t37bg2264.multibaas.com/api/v0/chains/ethereum/addresses/electrictylabels/contracts/electricitylabels/methods/getElectricityRecords';
+  let options: RequestInit = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzAwMjY0OTk4LCJqdGkiOiI2M2MyMjFmOC1lNzcwLTRhYTAtOTRmOC04MDI4ZjdiNTkyOWQifQ.99ANV7capYMzhwEAPvhzh51_jgsZcQnyjFst7s-Wca8'
+    },
+    body: JSON.stringify({
+      "args": ["0x85Ec95865AD3F912213f105d4f44e132B381f719"],
+      "from": "0x85Ec95865AD3F912213f105d4f44e132B381f719"
+    })
+  };
 
-// https://web3auth.io/docs/sdk/pnp/web/modal/whitelabel#whitelabeling-while-modal-initialization
-const openloginAdapter = new OpenloginAdapter({
-  loginSettings: {
-    mfaLevel: 'mandatory'
-  },
-  adapterSettings: {
-    uxMode: 'popup',
-    whiteLabel: {
-      name: 'Safe'
-    }
-  }
-})
+  useEffect(() => {
+    fetch(url, options)
+      .then(response => response.json())
+      .then((data: Data) => {
+        if (data.result && Array.isArray(data.result.output)) {
+          data.result.output.forEach((record: Record) => {
+            console.log(`Amount: ${record.amount}, Electricity Type: ${record.electricityType}, Method: ${record.method}`);
+          });
+          values = data; // Assign the data to the values variable
+  
+          // Create the Merkle tree here, after values has been updated
+          let tree = null; // Initialize tree to null
+          if (values && values.result && Array.isArray(values.result.output)) {
+            tree = StandardMerkleTree.of(values.result.output.map(record => [record.amount, record.electricityType, record.method]), ["uint256", "uint8", "uint8"]);
+            console.log('Merkle Root:', tree.root);
+          } else {
+            console.log('Values are not defined or not in the correct format');
+          }
+  
+          if (tree) { // Check if tree is not null before using it
+            console.log('Merkle Root:', tree.root);
+            console.log(tree.render());
 
-const web3AuthConfig: Web3AuthConfig = {
-  txServiceUrl: 'https://safe-transaction-goerli.safe.global'
-}
 
-// Instantiate and initialize the pack
-const web3AuthModalPack = new Web3AuthModalPack(web3AuthConfig)
-await web3AuthModalPack.init({ options, adapters: [openloginAdapter], modalConfig })
+          }
+        }
+      })
+      .catch((error: Error) => console.error('Error:', error))
+  }, []);
+
+
 
   return (
-    <>
-  
-      <p>
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div>
+      <p>Test</p>
+    
+    </div>
   )
 }
 
