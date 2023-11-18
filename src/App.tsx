@@ -183,12 +183,14 @@ const getRoot = async () => {
     txServiceUrl: 'https://safe-transaction-goerli.safe.global'
   }
 
-  async function initializeWeb3Auth() {
-    const web3AuthModalPack = new Web3AuthModalPack(web3AuthConfig);
-    await web3AuthModalPack.init({ options: authOptions});
-  }
-  
-  initializeWeb3Auth();
+  useEffect(() => {
+    async function initializeWeb3Auth() {
+      const web3AuthModalPack = new Web3AuthModalPack(web3AuthConfig);
+      await web3AuthModalPack.init({ options: authOptions});
+    }
+    
+    initializeWeb3Auth();
+  }, []);
 
 
   return (
