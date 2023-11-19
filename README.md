@@ -2,7 +2,7 @@
 
 Zero Knowledge is sooooo hot right now! Do you know what else is so hot right now? THE EARTH! 
 
-Green Zkrciticty brings the power of Zero Knowledge to contribute in combating Climate Change. This is done by providing a scalable and privacy
+Green Zkrciticty brings the power of Zero Knowledge to contribute to combating Climate Change. This is done by providing a scalable and privacy
 preserving way to label electricity as coming from either green sources such as wind/solar or grey sources like burning coal.
 
 ![Diagram Picture](/img/diagram2.png)
@@ -26,8 +26,68 @@ ZK adds both a layer to be more efficient and private. Privacy is important here
 
 
 
-## What Has Been Built 
+## How it Works 
+### Wallet Interaction 
+Wallets are created via Aztec.JS - This simulates a new consumer or electricity generator onboards to the network. This is done programmatically: 
+
+
+
+### Smart Contract 
+A deployed Smart Contract via the Aztec Sandbox handles: 
+- Messages are stored from both consumers and generators on either the amount of electricity generated or consumed and what type. 
+
+```
+ struct Storage {
+        green_wattage_generated: PublicState<SafeU120, SAFE_U120_SERIALIZED_LEN>,
+        grey_wattage_generated: PublicState<SafeU120, SAFE_U120_SERIALIZED_LEN>,
+        green_wattage_consumed: PublicState<SafeU120, SAFE_U120_SERIALIZED_LEN>,
+        grey_wattage_consumed:  PublicState<SafeU120, SAFE_U120_SERIALIZED_LEN>,
+    }
+
+```
+
+- The totals for each type are grouped so they can be compared 
+
+```
+ fn generated_green (amount: Field) 
+        let amount = SafeU120::new(amount);
+        storage.green_wattage_generated.write(amount);
+
+```
+
+- The totals of green energy generated vs green energy are compared. The same with grey energy consumed/generated. This is done under a Private function using Aztec which means only a certain address can access this information. If the amount generated and consumed do not equal each other, the function is not completed. 
+
+What this means is that if I was a generator, I could not make up how much green energy I have generated if there is not the same amount of consumption (reported by consumers) equal to it. 
+
+```
+ assert(green_gen_total == green_con_total, "Green Electricity Consumed and Generated must be equal");
+assert(grey_gen_total == grey_con_total, "Gray Electricity consumed and generated must be equal");
+
+```
+
+### Public Data 
+
+After some time, the contract will communicate on the L2 of Aztec and will send a message to the L1 to update its information. To simulate this, I have deplored a contract using CurveGrid.
+
+```
+ function recordElectricity(address _address, uint _amount, ElectricityType _electricityType, MethodType _method) public onlyAddress(_address) {
+        Electricity memory newRecord = Electricity({
+            amount: _amount,
+            electricityType: _electricityType,
+            method: _method
+        });
+
+```
+The contract receives the messages and stores the total of each source and electricity type. 
+```
+function getElectricityRecords(address _address) public view onlyAddress(_address) returns (Electricity[] memory) {
+        return electricityRecords[_address];
+    }
+```
 
 ## What is Left to Build 
-Using an Account Abstraction service, creating accounts for each of the meters to easily send messages to the smart contract. I mean, can you imagine someone in a coal mine or wind farm having to set up Metamask??? 
+- Using an Account Abstraction service, creating accounts for each of the meters to easily send messages to the smart contract. I mean, can you imagine someone in a coal mine or wind farm having to set up Metamask??? 
 
+- Communication between Aztec and EVM 
+
+- An actual front-end for monitoring/user interaction 
