@@ -32,7 +32,6 @@ import CounterArtifact  from '../contracts/counter/target/Counter.json' assert {
     const addresses = {
         token: token.address.toString(),
       };
-      writeFileSync('addresses.json', JSON.stringify(addresses, null, 2));
     
     
     main().catch((err) => {

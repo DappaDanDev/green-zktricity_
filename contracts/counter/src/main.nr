@@ -56,6 +56,9 @@ contract Counter {
 	    } }
 	}
 
+    #[aztec(private)]
+    fn constructor(){}
+
      #[aztec(public)]
     fn generated_green (amount: Field) {// Write a public function that returns it from the private string 
         let amount = SafeU120::new(amount);
