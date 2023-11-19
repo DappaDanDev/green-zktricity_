@@ -1,0 +1,21 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run clean && tsc -b",
+    "build:dev": "tsc -b --watch",
+    "clean": "rm -rf ./dest tsconfig.tsbuildinfo",
+    "start": "npm run build && DEBUG='token' node ./index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@aztec/aztec.js": "^0.15.0",
+    "@aztec/noir-contracts": "^0.15.0",
+    "@types/node": "^20.9.2",
+    "typescript": "^5.2.2"
+  }
+}
