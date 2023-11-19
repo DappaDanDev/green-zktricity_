@@ -1,12 +1,17 @@
 import { useEffect, useState, useRef } from 'react'
 import { StandardMerkleTree } from "@openzeppelin/merkle-tree";
-import { Web3AuthModalPack, Web3AuthConfig } from '@safe-global/auth-kit'
-import { Web3AuthOptions } from '@web3auth/modal'
-import { CHAIN_NAMESPACES } from '@web3auth/base'
 import { ethers} from 'ethers';
-import { InfuraProvider } from "ethers"
+
 
 import './App.css'
+
+
+
+
+
+
+
+
 
 type Record = {
   amount: number;
@@ -163,34 +168,7 @@ const getRoot = async () => {
   }, []);
 
 
-  const authOptions: Web3AuthOptions = {
-    clientId: 'BLmW2sJk1rYDmxzD0X5pO7LtQgC2HUoH4wrRbmZHJfWIdBHY5RqeXEpco0Lni_KiUyS6vbzJQFAMMeZKwgtiRMw', // https://dashboard.web3auth.io/
-    web3AuthNetwork: 'testnet',
-    chainConfig: {
-      chainNamespace: CHAIN_NAMESPACES.EIP155,
-      chainId: '0x5',
-      // https://chainlist.org/
-      rpcTarget: 'https://rpc.ankr.com/eth_goerli'
-    },
-    uiConfig: {
-      theme: 'dark',
-      loginMethodsOrder: ['google', 'facebook']
-    }
-  }
- 
 
-  const web3AuthConfig: Web3AuthConfig = {
-    txServiceUrl: 'https://safe-transaction-goerli.safe.global'
-  }
-
-  useEffect(() => {
-    async function initializeWeb3Auth() {
-      const web3AuthModalPack = new Web3AuthModalPack(web3AuthConfig);
-      await web3AuthModalPack.init({ options: authOptions});
-    }
-    
-    initializeWeb3Auth();
-  }, []);
 
 
   return (
